@@ -10,6 +10,6 @@ namespace DatingApp.Data
 
         //Add reference of Db Context to Startup/ConfigureServices
         public DbSet<Value> Values { get; set; }
-
+        public DbSet<User> Users { get; set; }
     }
 }
