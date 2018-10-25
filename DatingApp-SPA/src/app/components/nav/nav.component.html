@@ -13,10 +13,26 @@
     </li>
   </ul>
 
-  <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" placeholder="Username" type="text">
-    <input class="form-control mr-sm-2" placeholder="Password" type="password">
-    <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
+  <div *ngIf="isLoggedIn()" class="dropdown">
+    <a class="dropdown-toggle text-light">Welcome User</a>
+
+    <div class="dropdown-menu">
+      <a href="" class="dropdown-item"><i class="fa fauser"></i> Edit Profile</a>
+      <div class="dropdown-divider"></div>
+      <a href="" class="dropdown-item"><i class="fa fa-sign-out"></i> Logout</a>
+    </div>
+  </div>
+
+
+  <form *ngIf="!isLoggedIn()" class="form-inline my-2 my-lg-0" #dataForm="ngForm" (ngSubmit)="login()">
+    <input class="form-control mr-sm-2" placeholder="Username" type="text" name="username" required [(ngModel)]="model.username">
+    <input class="form-control mr-sm-2" placeholder="Password" type="password" name="password" required [(ngModel)]="model.password">
+    <button class="btn btn-success my-2 my-sm-0" type="submit" [disabled]="!dataForm.valid">Login</button>
   </form>
 
+  <ul *ngIf="isLoggedIn()" class="navbar-nav" style="margin-left: 5px;">
+    <li class="nav-item">
+      <a class="nav-link text-light" (click)="LogOut()">Logout</a>
+    </li>
+  </ul>
 </nav>
