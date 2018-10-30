@@ -2,7 +2,7 @@ using DatingApp.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace DatingApp.Data
+namespace DatingApp.Datas
 {
     public class DataContext : DbContext
     {

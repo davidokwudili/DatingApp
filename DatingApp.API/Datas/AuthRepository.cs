@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DatingApp.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DatingApp.Data
+namespace DatingApp.Datas
 {
     public class AuthRepository : IAuthRepository
     {
@@ -21,8 +21,8 @@ namespace DatingApp.Data
             if (user == null)
                 return null;
 
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+            // if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            //     return null;
 
             return user;
         }

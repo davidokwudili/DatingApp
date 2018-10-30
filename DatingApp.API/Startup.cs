@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using DatingApp.Data;
+using DatingApp.API.helpers;
+using DatingApp.Datas;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,11 +73,29 @@ namespace DatingApp.Api
             }
             else
             {
-                app.UseHsts();
+                // to handle all API error messages
+                app.UseExceptionHandler(handler =>
+                {
+                    handler.Run(async context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                        var error = context.Features.Get<IExceptionHandlerFeature>();
+                        if (error != null)
+                        {
+                            //Our Extention Method
+                            context.Response.AddApplicationError(error.Error.Message);
+                            // write erro asyc
+                            await context.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
+                });
+                // app.UseHsts();
             }
 
+
             // app.UseHttpsRedirection();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); //add allow policy
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); //add allow policy, for the api to be accessible
             app.UseAuthentication(); //so as to use auth where it's availavable on our API controler
             app.UseMvc();
         }
