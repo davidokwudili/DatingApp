@@ -3,16 +3,24 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { ValueComponent } from './components/value/value.component';
-import { NavComponent } from './components/nav/nav.component';
-import { HomeComponent } from './components/home/home.component';
-import { RegisterComponent } from './components/register/register.component';
-import { ErrorIntercepterProvider } from './services/error.interceptor';
+import { ValueComponent } from './_components/value/value.component';
+import { NavComponent } from './_components/nav/nav.component';
+import { HomeComponent } from './_components/home/home.component';
+import { RegisterComponent } from './_components/register/register.component';
+import { MemberListComponent } from './_components/member-list/member-list.component';
+import { ListsComponent } from './_components/lists/lists.component';
+import { MessagesComponent } from './_components/messages/messages.component';
 
-import { AuthService } from './services/auth.service';
-import { AlertifyService } from './services/alertify.service';
+import { ErrorIntercepterProvider } from './_services/error.interceptor';
+
+import { AuthService } from './_services/auth.service';
+import { AlertifyService } from './_services/alertify.service';
+
+import { appRoutes, AppRoutingModule } from './Routes';
+import { AuthGuard } from './_guards/auth.guard';
 
 @NgModule({
   declarations: [
@@ -20,15 +28,25 @@ import { AlertifyService } from './services/alertify.service';
     ValueComponent,
     NavComponent,
     HomeComponent,
-    RegisterComponent
+    RegisterComponent,
+    MemberListComponent,
+    ListsComponent,
+    MessagesComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    AppRoutingModule
+    // RouterModule.forRoot(appRoutes)
   ],
-  providers: [AuthService, ErrorIntercepterProvider, AlertifyService],
+  providers: [
+    AuthService,
+    ErrorIntercepterProvider,
+    AlertifyService,
+    AuthGuard
+  ],
 
   bootstrap: [AppComponent]
 })

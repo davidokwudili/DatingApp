@@ -4,6 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using DatingApp.API.Data;
+using DatingApp.API.Datas;
+using DatingApp.API.Datas.IDatas;
 using DatingApp.API.helpers;
 using DatingApp.Datas;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -39,13 +43,25 @@ namespace DatingApp.Api
             //add Db Context data and get Sqlite connection string from the Configuration File
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultSqliteCon")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    //So as to ignore the exxept (Newtonsoft.Json.JsonSerializationException: Self referencing loop detected for property )
+                    .AddJsonOptions(opt =>
+                    {
+                        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    });
 
             // configgure the CORS so as to allow connection based on policies
             services.AddCors();
 
+            // add the auto mapper service
+            services.AddAutoMapper();
+
+            // so as to run the seed class 1ce
+            services.AddTransient<Seed>();
+
             // configgure the AuthRepo as a service to be available for injection
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
 
             // configgure so as to allow authentication on our API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -63,7 +79,7 @@ namespace DatingApp.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             // ALWAYS BE CONCERNED ABOUT THE ORDERING HERE
 
@@ -95,8 +111,13 @@ namespace DatingApp.Api
 
 
             // app.UseHttpsRedirection();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); //add allow policy, for the api to be accessible
-            app.UseAuthentication(); //so as to use auth where it's availavable on our API controler
+            // add the seed user fucn to to pserform opt on start, comment after inserting datas once
+            // seeder.SeedUsers();
+
+            //add allow policy, for the api to be accessible
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //so as to use auth where it's availavable on our API controler
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
