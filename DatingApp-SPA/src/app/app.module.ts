@@ -1,8 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  BsDropdownModule,
+  TabsModule,
+  BsDatepickerModule
+} from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { appRoutes, AppRoutingModule } from './Routes';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -18,6 +22,7 @@ import { ListsComponent } from './_components/lists/lists.component';
 import { MessagesComponent } from './_components/messages/messages.component';
 import { MemberCardComponent } from './_components/members/member-card/member-card.component';
 import { MemberDetailComponent } from './_components/members/member-detail/member-detail.component';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 import { ErrorIntercepterProvider } from './_services/error.interceptor';
 import { AuthService } from './_services/auth.service';
@@ -36,6 +41,7 @@ export function tokenGetter() {
 
 @NgModule({
   declarations: [
+    TimeAgoPipe,
     AppComponent,
     ValueComponent,
     NavComponent,
@@ -52,8 +58,10 @@ export function tokenGetter() {
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
+    BsDatepickerModule.forRoot(),
     AppRoutingModule,
     NgxGalleryModule,
     // RouterModule.forRoot(appRoutes),

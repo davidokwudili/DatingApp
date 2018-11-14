@@ -53,6 +53,10 @@ namespace DatingApp.Api
             // configgure the CORS so as to allow connection based on policies
             services.AddCors();
 
+            // Set data to the cloudinary Class from the Configuration File
+            //it will convert the data in the config file to tha class
+            services.Configure<CoudinarySettings>(Configuration.GetSection("CoudinarySettings"));
+
             // add the auto mapper service
             services.AddAutoMapper();
 
@@ -76,6 +80,9 @@ namespace DatingApp.Api
                             ValidateAudience = false
                         };
                     });
+
+            //Aslo add the LogUserActivity as a service to function
+            services.AddScoped<LogUserActivity>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
