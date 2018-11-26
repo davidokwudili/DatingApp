@@ -8,7 +8,9 @@ using DatingApp.API.DTOs;
 using DatingApp.Datas;
 using DatingApp.DTOs;
 using DatingApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,10 +23,14 @@ namespace DatingApp.Controllers
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
+        //private readonly UserManager<User> _userManager;
+        //private readonly SignInManager<User> _signInManager;
 
         public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
             _mapper = mapper;
+            //_userManager = userManager;
+            //_signInManager = signInManager;
             _repo = repo;
             _config = config;
         }
@@ -56,10 +62,43 @@ namespace DatingApp.Controllers
             if (loginUser == null)
                 return Unauthorized();
 
-            var claims = new[]
+            var userToReturn = _mapper.Map<UserForListDto>(loginUser);
+
+            return Ok(new
             {
-                new Claim(ClaimTypes.NameIdentifier, loginUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, loginUser.Username)
+                token = GenerateJwtToken(loginUser),
+                user = userToReturn
+            });
+
+
+            //var user = await _userManager.FindByNameAsync(userForLogin.Username);
+
+            //var result = await _signInManager
+            //    .CheckPasswordSignInAsync(user, userForLogin.Password, false);
+
+            //if (result.Succeeded)
+            //{
+            //    //var appUser = await _userManager.Users.Include(p => p.Photos)
+            //    //    .FirstOrDefaultAsync(u => u.NormalizedUserName == userForLoginDto.Username.ToUpper());
+
+            //    //var userToReturn = _mapper.Map<UserForListDto>(appUser);
+
+            //    //return Ok(new
+            //    //{
+            //    //    token = GenerateJwtToken(appUser).Result,
+            //    //    user = userToReturn
+            //    //});
+            //} 
+        }
+
+
+
+        private string GenerateJwtToken(User user)
+        {
+            var claims = new[]
+           {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8
@@ -78,12 +117,8 @@ namespace DatingApp.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new
-            {
-                token = tokenHandler.WriteToken(token)
-            });
+            return tokenHandler.WriteToken(token);
         }
-
 
     }
 }

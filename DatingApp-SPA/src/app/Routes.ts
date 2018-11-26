@@ -13,6 +13,7 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditComponent } from './_components/members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
+import { LikeListResolver } from './_resolvers/like-list.resolver';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // { path: '**', redirectTo: '', pathMatch: 'full' },
@@ -40,7 +41,11 @@ export const appRoutes: Routes = [
         resolve: { user: MemberDetailResolver }
       },
       { path: 'messages', component: MessagesComponent },
-      { path: 'lists', component: ListsComponent }
+      {
+        path: 'lists',
+        component: ListsComponent,
+        resolve: { likes: LikeListResolver }
+      }
     ]
   }
 ];

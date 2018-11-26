@@ -21,8 +21,8 @@ namespace DatingApp.Datas
             if (user == null)
                 return null;
 
-            // if (!SaltHashing.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-            //     return null;
+            //if (!SaltHashing.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            //    return null;
 
             return user;
         }

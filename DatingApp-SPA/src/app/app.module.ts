@@ -5,7 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   BsDropdownModule,
   TabsModule,
-  BsDatepickerModule
+  BsDatepickerModule,
+  PaginationModule,
+  ButtonsModule
 } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { appRoutes, AppRoutingModule } from './Routes';
@@ -22,6 +24,8 @@ import { ListsComponent } from './_components/lists/lists.component';
 import { MessagesComponent } from './_components/messages/messages.component';
 import { MemberCardComponent } from './_components/members/member-card/member-card.component';
 import { MemberDetailComponent } from './_components/members/member-detail/member-detail.component';
+import { MemberEditComponent } from './_components/members/member-edit/member-edit.component';
+
 import { TimeAgoPipe } from 'time-ago-pipe';
 
 import { ErrorIntercepterProvider } from './_services/error.interceptor';
@@ -31,9 +35,9 @@ import { UserService } from './_services/user.service';
 import { AuthGuard } from './_guards/auth.guard';
 import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
-import { MemberEditComponent } from './_components/members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
+import { LikeListResolver } from './_resolvers/like-list.resolver';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -62,6 +66,8 @@ export function tokenGetter() {
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot(),
+    ButtonsModule.forRoot(),
     AppRoutingModule,
     NgxGalleryModule,
     // RouterModule.forRoot(appRoutes),
@@ -82,7 +88,8 @@ export function tokenGetter() {
     PreventUnsavedChanges,
     MemberDetailResolver,
     MemberListResolver,
-    MemberEditResolver
+    MemberEditResolver,
+    LikeListResolver
   ],
 
   bootstrap: [AppComponent]

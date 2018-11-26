@@ -9,6 +9,8 @@ import {
   NgxGalleryAnimation
 } from 'ngx-gallery';
 
+import { AuthService } from 'src/app/_services/auth.service';
+
 @Component({
   selector: 'app-member-detail',
   templateUrl: './member-detail.component.html',
@@ -21,6 +23,7 @@ export class MemberDetailComponent implements OnInit {
 
   constructor(
     private userSrv: UserService,
+    private authService: AuthService,
     private alert: AlertifyService,
     private route: ActivatedRoute
   ) {}
@@ -68,4 +71,15 @@ export class MemberDetailComponent implements OnInit {
   //     }
   //   );
   // }
+
+  sendLike(id: number) {
+    this.userSrv.sendLike(this.authService.decodedToken.nameid, id).subscribe(
+      data => {
+        this.alert.success('You have liked: ' + this.user.knownAs);
+      },
+      error => {
+        this.alert.error(error);
+      }
+    );
+  }
 }

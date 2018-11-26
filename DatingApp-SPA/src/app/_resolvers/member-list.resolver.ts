@@ -9,6 +9,9 @@ import { catchError } from 'rxjs/operators';
 // Basicaly, helps to get data before activating the Route, which shouldn't cause navigation error
 @Injectable()
 export class MemberListResolver implements Resolve<User[]> {
+  pageNumber = 1;
+  pageSize = 10;
+
   constructor(
     private userSrv: UserService,
     private alert: AlertifyService,
@@ -16,8 +19,8 @@ export class MemberListResolver implements Resolve<User[]> {
   ) {}
 
   resolve(): Observable<User[]> {
-    // get the id from the routerSnatSh, (It's alread an obersavble, so just use pipe)
-    return this.userSrv.getUsers().pipe(
+    // get the first user list, without parameters
+    return this.userSrv.getUsers(this.pageNumber, this.pageSize).pipe(
       // catch error
       catchError(error => {
         // show error message

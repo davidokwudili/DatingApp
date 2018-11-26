@@ -68,7 +68,7 @@ namespace DatingApp.API.Controllers
                 return Unauthorized();
 
             // get the user
-            var mainUser = await _repo.GetUser(userId);
+            var mainUser = await _repo.GetUser(userId, true);
 
             var file = photoForCreationDto.File;
 
