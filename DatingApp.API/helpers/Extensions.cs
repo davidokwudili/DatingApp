@@ -1,4 +1,5 @@
 using System;
+using DatingApp.Datas;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -7,6 +8,11 @@ namespace DatingApp.API.helpers
 {
     public static class Extensions
     {
+
+        public static void GetObject(this DataContext context)
+        {
+
+        }
 
         public static void AddApplicationError(this HttpResponse response, string message)
         {

@@ -9,6 +9,7 @@ import {
   PaginationModule,
   ButtonsModule
 } from 'ngx-bootstrap';
+
 import { RouterModule } from '@angular/router';
 import { appRoutes, AppRoutingModule } from './Routes';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -38,6 +39,9 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 import { LikeListResolver } from './_resolvers/like-list.resolver';
+import { MessageService } from './_services/message.service';
+import { MessagesResolver } from './_resolvers/messages.resolver';
+import { MemberMessagesComponent } from './_components/members/member-messages/member-messages.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -56,7 +60,8 @@ export function tokenGetter() {
     MessagesComponent,
     MemberCardComponent,
     MemberDetailComponent,
-    MemberEditComponent
+    MemberEditComponent,
+    MemberMessagesComponent
   ],
   imports: [
     BrowserModule,
@@ -82,6 +87,7 @@ export function tokenGetter() {
   providers: [
     AuthService,
     UserService,
+    MessageService,
     ErrorIntercepterProvider,
     AlertifyService,
     AuthGuard,
@@ -89,7 +95,8 @@ export function tokenGetter() {
     MemberDetailResolver,
     MemberListResolver,
     MemberEditResolver,
-    LikeListResolver
+    LikeListResolver,
+    MessagesResolver
   ],
 
   bootstrap: [AppComponent]

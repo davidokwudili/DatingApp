@@ -57,13 +57,13 @@ export class UserService {
 
     return (
       this.http
-        // get the users from the url, and pass the parameters set above, which is a repose type
+        // get the users from the url, and pass the parameters set above, which is a reponse type
         .get<User[]>(this.baseUrl + 'users', { observe: 'response', params })
         .pipe(
           map(Response => {
             // get the json result from the body
             paginatedResult.result = Response.body;
-            // check if the header from the returned object is null
+            // check if the header from the returned object is not null
             if (Response.headers.get('Pagination') != null) {
               // then get the json data from the header and store the Iagination Interface
               paginatedResult.pagination = JSON.parse(

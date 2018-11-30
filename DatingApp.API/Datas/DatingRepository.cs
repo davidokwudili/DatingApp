@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.Api.helpers;
 using DatingApp.API.Datas.IDatas;
 using DatingApp.API.helpers;
 using DatingApp.Datas;
@@ -12,12 +13,15 @@ namespace DatingApp.API.Datas
 {
     public class DatingRepository : IDatingRepository
     {
+
         private readonly DataContext _context;
+
 
         public DatingRepository(DataContext context)
         {
             _context = context;
         }
+
 
         public void Add<T>(T entity) where T : class
         {
@@ -128,9 +132,76 @@ namespace DatingApp.API.Datas
             }
         }
 
+
+
         public async Task<bool> SaveAll()
         {
             return await _context.SaveChangesAsync() > 0;
+        }
+
+
+
+        public async Task<Message> GetMessage(int id)
+        {
+            return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<PagedList<Message>> GetMessagesForUser(ParamsMessage paramsMessage)
+        {
+            //get the messages
+            var messages = _context.Messages
+                //include the sender object, and then include the photo of the sender
+                .Include(u => u.Sender).ThenInclude(p => p.Photos)
+                //include the Recipient object, and then include the photo of the Recipient
+                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+                //make it quaryable, so as not to cause error
+                .AsQueryable();
+
+            //check the passed in parameter
+            switch (paramsMessage.MessageContainer)
+            {
+                case "Inbox":
+                    //get messages based on inboxe, based on RecipientID who sent me messages, & where it's not deleted
+                    messages = messages.Where(u => u.RecipientId == paramsMessage.UserId
+                        && u.RecipientDeleted == false);
+                    break;
+                case "Outbox":
+                    //get messages based on outbox, based on who i sent messages, & where it's not deleted
+                    messages = messages.Where(u => u.SenderId == paramsMessage.UserId
+                        && u.SenderDeleted == false);
+                    break;
+                default:
+                    //get the default, which is "UnRead"
+                    messages = messages.Where(u => u.RecipientId == paramsMessage.UserId
+                        && u.RecipientDeleted == false && u.IsRead == false);
+                    break;
+            }
+
+            //order by decending, so as to show from the latest message
+            messages = messages.OrderByDescending(d => d.MessageSent);
+
+            //query and get the number of messages based on the page size and it number
+            return await PagedList<Message>.QueryAsync(messages, paramsMessage.PageNumber, paramsMessage.PageSize);
+        }
+
+        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        {
+            //get messages
+            var messages = await _context.Messages
+                    //get the messages from the sender with user photos
+                    .Include(u => u.Sender).ThenInclude(p => p.Photos)
+                    //get the messages from the recipient with user photos
+                    .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+                    //get messages i sent and messages a user has sent to me
+                    .Where(m =>
+                        m.RecipientId == userId && m.RecipientDeleted == false && m.SenderId == recipientId
+                        ||
+                        m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)
+                    //order by the date sent desc to show it latest
+                    .OrderByDescending(m => m.MessageSent)
+                    .ToListAsync();
+
+            return messages;
         }
     }
 }
